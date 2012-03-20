@@ -1,0 +1,51 @@
+--- automysqlbackup-v3.0_rc6/automysqlbackup
++++ automysqlbackup-v3.0_rc6/automysqlbackup
+@@ -850,7 +850,6 @@ directory_checks_enable_logging () {
+ 	[[ "${CONFIG_mysql_dump_dbstatus}" = 'yes' ]] && { checkdirs=( "${checkdirs[@]}" "${CONFIG_backup_dir}/status" ); }
+ 
+     tmp_permcheck=0
+-    printf '# Checking for permissions to write to folders:\n'
+ 
+ 
+     # "dirname ${CONFIG_backup_dir}" exists?
+@@ -873,14 +872,9 @@ directory_checks_enable_logging () {
+ 
+ 
+     # -> check base folder
+-    printf 'base folder %s ... ' "$(dirname "${CONFIG_backup_dir}")"
+     if [[ -d "$(dirname "${CONFIG_backup_dir}")" ]]; then
+ 
+-	printf 'exists ... ok.\n'
+-	printf 'backup folder %s ... ' "${CONFIG_backup_dir}"
+-
+ 	if [[ -d "${CONFIG_backup_dir}" ]]; then
+-	    printf 'exists ... writable? ' 
+ 	    if (( $CONFIG_dryrun )); then
+ 	      printf 'dry-running. Skipping. Logging to /tmp\n'
+ 	      log_file="/tmp/${CONFIG_mysql_dump_host}-`date +%N`.log"
+@@ -889,7 +883,6 @@ directory_checks_enable_logging () {
+ 	      tmp_permcheck=1
+ 	    else
+ 		if chk_folder_writable "${CONFIG_backup_dir}"; then
+-		  printf 'yes. Proceeding.\n'
+ 		  log_file="${CONFIG_backup_dir}/${CONFIG_mysql_dump_host}-`date +%N`.log"
+ 		  log_errfile="${CONFIG_backup_dir}/ERRORS_${CONFIG_mysql_dump_host}-`date +%N`.log"
+ 		  activateIO "$log_file" "$log_errfile"
+@@ -1643,7 +1636,7 @@ method_backup () {
+ 	load_default_config
+ 
+ 	trap mail_cleanup EXIT SIGHUP SIGINT SIGQUIT SIGTERM
+-	if [[ -r "${CONFIG_configfile}" ]]; then source "${CONFIG_configfile}"; echo "Parsed config file \"${CONFIG_configfile}\""; else let "N |= $N_config_file_missing"; fi; echo
++	if [[ -r "${CONFIG_configfile}" ]]; then source "${CONFIG_configfile}"; else let "N |= $N_config_file_missing"; fi
+ 	if (( $opt_flag_config_file )); then if [[ -r "${opt_config_file}" ]]; then source "${opt_config_file}"; let "N |= $N_arg_conffile_parsed"; else let "N |= $N_arg_conffile_unreadable"; fi; else let "N |= $N_too_many_args"; fi
+ 
+ 	(( $CONFIG_dryrun )) && {
+@@ -2209,7 +2202,7 @@ NO_ARGS=0
+ E_OPTERROR=85
+ 
+ if (( $# == $NO_ARGS )); then   # Script invoked with no command-line args?
+-  echo "Invoking backup method."; echo; method_backup
++  method_backup
+ fi
+ 
+ while getopts ":c:blh" Option
