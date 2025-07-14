@@ -28,8 +28,8 @@ Other Features include:
 
 %prep
 %setup -q -n %{name}-v%{version}_%{subver}
-%patch2 -p1
-%patch3 -p1
+%patch -P2 -p1
+%patch -P3 -p1
 
 %{__sed} -i -e '1s,#!/usr/bin/env bash,#!/bin/bash,' %{name}
 
